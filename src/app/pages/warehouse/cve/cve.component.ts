@@ -7,6 +7,9 @@ import {CountryService} from '../../../services/country.service';
 import {Country} from '../../../interfaces/country.interface';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CVEMode} from '../../../shared/cve-mode';
+import {NbDialogRef, NbDialogService} from '@nebular/theme';
+import {AWMSConfirmationDialogueComponent} from '../../../components/awms/awms-confirmation-dialogue.component';
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-warehouse-cve',
@@ -43,6 +46,7 @@ export class CVEComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly warehouseService: WarehouseService,
     private readonly countryService: CountryService,
+    private readonly dialogService: NbDialogService,
   ) {
   }
 
@@ -63,6 +67,7 @@ export class CVEComponent implements OnInit {
         break;
       case 'view':
         await this.initForm(uuid);
+        this.disableForm();
         this.loaded = true;
         break;
     }
@@ -93,6 +98,7 @@ export class CVEComponent implements OnInit {
       },
     });
     this.mode = 'edit';
+    this.enableForm();
     this.markControlsAsTouched(this.companyForm);
   }
 
@@ -104,10 +110,30 @@ export class CVEComponent implements OnInit {
     });
     this.mode = 'view';
     await this.initForm(this.warehouse.uuid);
+    this.disableForm();
   }
 
   save(): void {
 
+  }
+
+  async discard(): Promise<void> {
+    switch (this.mode) {
+      case 'create':
+        break;
+      case 'edit':
+        if (this.companyForm.dirty) {
+          const confirmed = await this.openStopEditConfirmationDialogue();
+          if (confirmed) {
+            setTimeout(async () => {
+              await this.switchToViewMode();
+            });
+          }
+        } else {
+          await this.switchToViewMode();
+        }
+        break;
+    }
   }
 
   private markControlsAsTouched(formGroup: FormGroup | FormArray): void {
@@ -121,5 +147,32 @@ export class CVEComponent implements OnInit {
 
   getAddressLines(): FormArray {
     return this.companyForm.get('addressLines') as FormArray;
+  }
+
+  openStopEditConfirmationDialogue(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const dialogRef: NbDialogRef<any> = this.dialogService.open(AWMSConfirmationDialogueComponent, {
+        context: {
+          title: 'Discard changes',
+          message: 'Are you sure you want to discard your changes?',
+        },
+      });
+
+      dialogRef.onClose.subscribe(result => {
+        resolve(result);
+      });
+    });
+  }
+
+  disableForm(): void {
+    Object.values(this.companyForm.controls).forEach(control => {
+      control.disable();
+    });
+  }
+
+  enableForm(): void {
+    Object.values(this.companyForm.controls).forEach(control => {
+      control.enable();
+    });
   }
 }
