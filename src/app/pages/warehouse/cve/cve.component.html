@@ -85,7 +85,7 @@
           <div class="row">
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-country-dropdown [formOptions]="companyForm" dropdownType="countries" humanName="Country" objectName="country" [countries]="countries"></ngx-awms-form-country-dropdown>
+                <ngx-awms-form-country-dropdown [formOptions]="companyForm" dropdownType="countries" humanName="Country" objectName="country" [countries]="countries" [disabled]="mode === 'view'"></ngx-awms-form-country-dropdown>
               </div>
             </div>
           </div>
@@ -101,8 +101,8 @@
 
           <div *ngIf="mode === 'edit'">
             <!--[disabled]="!companyForm.valid"-->
-            <button nbButton status="success" (click)="save()" style="margin-right: 10px">Save</button>
-            <button nbButton status="danger">Discard</button>
+            <button nbButton status="success" type="button" (click)="save()" style="margin-right: 10px">Save</button>
+            <button nbButton status="danger" type="button" (click)="discard()">Discard</button>
           </div>
         </nb-card-body>
       </nb-card>
