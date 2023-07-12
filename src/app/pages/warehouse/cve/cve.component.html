@@ -100,8 +100,7 @@
           </div>
 
           <div *ngIf="mode === 'edit'">
-            <!--[disabled]="!companyForm.valid"-->
-            <button nbButton status="success" type="button" (click)="save()" style="margin-right: 10px">Save</button>
+            <button nbButton status="success" type="button" [disabled]="!companyForm.valid" (click)="save()" style="margin-right: 10px">Save</button>
             <button nbButton status="danger" type="button" (click)="discard()">Discard</button>
           </div>
         </nb-card-body>
