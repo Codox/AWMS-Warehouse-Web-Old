@@ -9,28 +9,14 @@ import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CVEMode} from '../../../shared/cve-mode';
 import {NbDialogRef, NbDialogService} from '@nebular/theme';
 import {AWMSConfirmationDialogueComponent} from '../../../components/awms/awms-confirmation-dialogue.component';
-import {delay} from 'rxjs/operators';
+import {BaseCVEComponent} from '../../../components/cve/base.cve.component';
 
 @Component({
   selector: 'ngx-warehouse-cve',
   styleUrls: ['./cve.component.scss'],
   templateUrl: './cve.component.html',
 })
-export class CVEComponent implements OnInit {
-  companyForm: FormGroup = new FormGroup({
-    name: new FormControl('', Validators.required),
-    uuid: new FormControl(''),
-    contactTelephone: new FormControl('', Validators.required),
-    addressLine1: new FormControl('', Validators.required),
-    addressLine2: new FormControl('', Validators.required),
-    addressLine3: new FormControl(''),
-    town: new FormControl('', Validators.required),
-    city: new FormControl('', Validators.required),
-    region: new FormControl('', Validators.required),
-    zipCode: new FormControl('', Validators.required),
-    country: new FormControl('', [Validators.required]),
-  });
-
+export class CVEComponent extends BaseCVEComponent implements OnInit {
   mode: CVEMode;
   utils = {
     upperFirst,
@@ -48,7 +34,37 @@ export class CVEComponent implements OnInit {
     private readonly countryService: CountryService,
     private readonly dialogService: NbDialogService,
   ) {
+    super();
+
+
   }
+
+  async getData(uuid: string) {
+    this.warehouse = await this.warehouseService.getWarehouse(uuid);
+  }
+
+  async initForm() {
+    this.setForm(new FormGroup({
+      name: new FormControl(this.warehouse.name, Validators.required),
+      uuid: new FormControl(this.warehouse.uuid),
+      contactTelephone: new FormControl(this.warehouse.contactTelephone, Validators.required),
+      addressLine1: new FormControl(this.warehouse.addressLines[0] ?
+        this.warehouse.addressLines[0] : '', Validators.required),
+      addressLine2: new FormControl(this.warehouse.addressLines[1] ?
+        this.warehouse.addressLines[1] : '', Validators.required),
+      addressLine3: new FormControl(this.warehouse.addressLines[2] ? this.warehouse.addressLines[2] : ''),
+      town: new FormControl(this.warehouse.town, Validators.required),
+      city: new FormControl(this.warehouse.city, Validators.required),
+      region: new FormControl(this.warehouse.region, Validators.required),
+      zipCode: new FormControl(this.warehouse.zipCode, Validators.required),
+      country: new FormControl(this.warehouse.country, [Validators.required]),
+    }));
+  }
+
+
+
+
+
 
   async ngOnInit(): Promise<void> {
     this.mode = this.route.snapshot.queryParamMap.get('mode') as CVEMode;
@@ -61,34 +77,18 @@ export class CVEComponent implements OnInit {
       case 'create':
         break;
       case 'edit':
-        await this.initForm(uuid);
-        this.markControlsAsTouched(this.companyForm);
+        await this.getData(uuid);
+        await this.initForm();
+        this.markControlsAsTouched(this.getForm());
         this.loaded = true;
         break;
       case 'view':
-        await this.initForm(uuid);
+        await this.getData(uuid);
+        await this.initForm();
         this.disableForm();
         this.loaded = true;
         break;
     }
-  }
-
-  async initForm(uuid: string): Promise<void> {
-    this.warehouse = await this.warehouseService.getWarehouse(uuid);
-
-    this.companyForm.patchValue({
-      name: this.warehouse.name,
-      uuid: this.warehouse.uuid,
-      contactTelephone: this.warehouse.contactTelephone,
-      addressLine1: this.warehouse.addressLines[0] ? this.warehouse.addressLines[0] : '',
-      addressLine2: this.warehouse.addressLines[1] ? this.warehouse.addressLines[1] : '',
-      addressLine3: this.warehouse.addressLines[2] ? this.warehouse.addressLines[2] : '',
-      town: this.warehouse.town,
-      city: this.warehouse.city,
-      region: this.warehouse.region,
-      zipCode: this.warehouse.zipCode,
-      country: this.warehouse.country,
-    });
   }
 
   switchToEditMode(): void {
@@ -99,18 +99,21 @@ export class CVEComponent implements OnInit {
     });
     this.mode = 'edit';
     this.enableForm();
-    this.markControlsAsTouched(this.companyForm);
+    this.markControlsAsTouched(this.getForm());
   }
 
   async switchToViewMode(): Promise<void> {
+    this.loaded = false;
     this.router.navigate(['/pages/warehouse/', this.warehouse.uuid], {
       queryParams: {
         mode: 'view',
       },
     });
     this.mode = 'view';
-    await this.initForm(this.warehouse.uuid);
+    await this.getData(this.warehouse.uuid);
+    await this.initForm();
     this.disableForm();
+    this.loaded = true;
   }
 
   save(): void {
@@ -122,7 +125,7 @@ export class CVEComponent implements OnInit {
       case 'create':
         break;
       case 'edit':
-        if (this.companyForm.dirty) {
+        if (this.getForm().dirty) {
           const confirmed = await this.openStopEditConfirmationDialogue();
           if (confirmed) {
             setTimeout(async () => {
@@ -136,18 +139,7 @@ export class CVEComponent implements OnInit {
     }
   }
 
-  private markControlsAsTouched(formGroup: FormGroup | FormArray): void {
-    Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        this.markControlsAsTouched(control);
-      }
-    });
-  }
 
-  getAddressLines(): FormArray {
-    return this.companyForm.get('addressLines') as FormArray;
-  }
 
   openStopEditConfirmationDialogue(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
@@ -165,13 +157,13 @@ export class CVEComponent implements OnInit {
   }
 
   disableForm(): void {
-    Object.values(this.companyForm.controls).forEach(control => {
+    Object.values(this.getForm().controls).forEach(control => {
       control.disable();
     });
   }
 
   enableForm(): void {
-    Object.values(this.companyForm.controls).forEach(control => {
+    Object.values(this.getForm().controls).forEach(control => {
       control.enable();
     });
   }
