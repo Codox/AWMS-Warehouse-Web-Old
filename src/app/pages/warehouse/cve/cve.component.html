@@ -11,14 +11,14 @@
             <!-- Name -->
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="Name" objectName="name" [mode]="mode"></ngx-awms-form-input>
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Name" objectName="name" [mode]="mode"></ngx-awms-form-input>
               </div>
             </div>
 
             <!-- UUID -->
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="UUID" objectName="uuid" [mode]="'view'"></ngx-awms-form-input>
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="UUID" objectName="uuid" [mode]="'view'"></ngx-awms-form-input>
               </div>
             </div>
           </div>
@@ -26,7 +26,7 @@
           <div class="row">
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="Contact Telephone" objectName="contactTelephone" [mode]="mode"></ngx-awms-form-input>
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Contact Telephone" objectName="contactTelephone" [mode]="mode"></ngx-awms-form-input>
               </div>
             </div>
           </div>
@@ -38,46 +38,32 @@
         <nb-card-body>
           <div class="row">
             <div class="col-sm-12">
-              <ngx-awms-form-input [formOptions]="companyForm" humanName="Address Line 1" objectName="addressLine1" [mode]="mode"></ngx-awms-form-input>
+              <ngx-awms-form-input [formOptions]="getForm()" humanName="Address Line 1" objectName="addressLine1" [mode]="mode"></ngx-awms-form-input>
             </div>
           </div>
 
           <div class="row">
             <div class="col-sm-12">
-              <ngx-awms-form-input [formOptions]="companyForm" humanName="Address Line 2" objectName="addressLine2" [mode]="mode"></ngx-awms-form-input>
+              <ngx-awms-form-input [formOptions]="getForm()" humanName="Address Line 2" objectName="addressLine2" [mode]="mode"></ngx-awms-form-input>
             </div>
           </div>
 
           <div class="row">
             <div class="col-sm-12">
-              <ngx-awms-form-input [formOptions]="companyForm" humanName="Address Line 3" objectName="addressLine3" [mode]="mode"></ngx-awms-form-input>
+              <ngx-awms-form-input [formOptions]="getForm()" humanName="Address Line 3" objectName="addressLine3" [mode]="mode"></ngx-awms-form-input>
             </div>
           </div>
 
           <div class="row">
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="Town" objectName="town" [mode]="mode"></ngx-awms-form-input>
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Town" objectName="town" [mode]="mode"></ngx-awms-form-input>
               </div>
             </div>
 
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="City" objectName="city" [mode]="mode"></ngx-awms-form-input>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="Region" objectName="region" [mode]="mode"></ngx-awms-form-input>
-              </div>
-            </div>
-
-            <div class="col-sm-6">
-              <div class="form-group">
-                <ngx-awms-form-input [formOptions]="companyForm" humanName="ZIP Code" objectName="zipCode" [mode]="mode"></ngx-awms-form-input>
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="City" objectName="city" [mode]="mode"></ngx-awms-form-input>
               </div>
             </div>
           </div>
@@ -85,7 +71,21 @@
           <div class="row">
             <div class="col-sm-6">
               <div class="form-group">
-                <ngx-awms-form-country-dropdown [formOptions]="companyForm" dropdownType="countries" humanName="Country" objectName="country" [countries]="countries" [disabled]="mode === 'view'"></ngx-awms-form-country-dropdown>
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Region" objectName="region" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="ZIP Code" objectName="zipCode" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-country-dropdown [formOptions]="getForm()" dropdownType="countries" humanName="Country" objectName="country" [countries]="countries" [disabled]="mode === 'view'"></ngx-awms-form-country-dropdown>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@
           </div>
 
           <div *ngIf="mode === 'edit'">
-            <button nbButton status="success" type="button" [disabled]="!companyForm.valid" (click)="save()" style="margin-right: 10px">Save</button>
+            <button nbButton status="success" type="button" [disabled]="!getForm().valid" (click)="save()" style="margin-right: 10px">Save</button>
             <button nbButton status="danger" type="button" (click)="discard()">Discard</button>
           </div>
         </nb-card-body>
