@@ -1,6 +1,10 @@
-import {FormGroup} from '@angular/forms';
-import {OnInit} from "@angular/core";
+import {FormArray, FormGroup} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
 
+@Component({
+  selector: 'ngx-base-cve-component',
+  template: '',
+})
 export abstract class BaseCVEComponent implements OnInit {
   form: FormGroup;
 
@@ -14,4 +18,16 @@ export abstract class BaseCVEComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  markControlsAsTouched(formGroup: FormGroup | FormArray): void {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.markControlsAsTouched(control);
+      }
+    });
+  }
+
+  abstract getData(uuid: string);
+  abstract initForm();
 }
