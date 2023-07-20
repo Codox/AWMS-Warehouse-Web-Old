@@ -3,10 +3,11 @@ import {RouterModule, Routes} from '@angular/router';
 import {ViewComponent} from './view/view.component';
 import {NbButtonModule, NbCardModule, NbIconModule, NbInputModule, NbLayoutModule} from '@nebular/theme';
 import {Ng2SmartTableModule} from 'ng2-smart-table';
-import {CVEComponent} from './cve/cve.component';
 import { CommonModule } from '@angular/common';
 import {AWMSComponentModule} from '../../components/awms/awms-component.module';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {WarehouseBaseCVEComponent} from './cve/base/base.cve.component';
+import {WarehouseEditComponent} from './cve/edit/edit.component';
 
 const routes: Routes = [{
   path: '',
@@ -16,8 +17,12 @@ const routes: Routes = [{
       component: ViewComponent,
     },
     {
+      path: ':uuid/edit',
+      component: WarehouseEditComponent,
+    },
+    {
       path: ':uuid',
-      component: CVEComponent,
+      component: WarehouseEditComponent,
     },
   ],
 }];
@@ -34,10 +39,12 @@ const routes: Routes = [{
     ReactiveFormsModule,
     NbButtonModule,
     NbIconModule,
+    FormsModule,
   ],
   declarations: [
     ViewComponent,
-    CVEComponent,
+    WarehouseBaseCVEComponent,
+    WarehouseEditComponent,
   ],
 })
 export class WarehouseModule { }
