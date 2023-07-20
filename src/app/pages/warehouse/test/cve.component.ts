@@ -17,7 +17,7 @@ import {BaseCVEComponent} from '../../../components/cve/base.cve.component';
   templateUrl: './cve.component.html',
 })
 export class CVEComponent extends BaseCVEComponent implements OnInit {
-  mode: CVEMode;
+
   utils = {
     upperFirst,
   };
@@ -32,7 +32,7 @@ export class CVEComponent extends BaseCVEComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly warehouseService: WarehouseService,
     private readonly countryService: CountryService,
-    private readonly dialogService: NbDialogService,
+    private readonly dialogueService: NbDialogService,
   ) {
     super();
 
@@ -61,11 +61,6 @@ export class CVEComponent extends BaseCVEComponent implements OnInit {
     }));
   }
 
-
-
-
-
-
   async ngOnInit(): Promise<void> {
     this.mode = this.route.snapshot.queryParamMap.get('mode') as CVEMode;
 
@@ -79,13 +74,12 @@ export class CVEComponent extends BaseCVEComponent implements OnInit {
       case 'edit':
         await this.getData(uuid);
         await this.initForm();
-        this.markControlsAsTouched(this.getForm());
+        await super.switchToEditMode();
         this.loaded = true;
         break;
       case 'view':
         await this.getData(uuid);
-        await this.initForm();
-        this.disableForm();
+        await super.switchToViewMode();
         this.loaded = true;
         break;
     }
@@ -97,22 +91,19 @@ export class CVEComponent extends BaseCVEComponent implements OnInit {
         mode: 'edit',
       },
     });
-    this.mode = 'edit';
-    this.enableForm();
-    this.markControlsAsTouched(this.getForm());
+
+    super.switchToEditMode();
   }
 
   async switchToViewMode(): Promise<void> {
     this.loaded = false;
-    this.router.navigate(['/pages/warehouse/', this.warehouse.uuid], {
+    await this.router.navigate(['/pages/warehouse/', this.warehouse.uuid], {
       queryParams: {
         mode: 'view',
       },
     });
-    this.mode = 'view';
     await this.getData(this.warehouse.uuid);
-    await this.initForm();
-    this.disableForm();
+    await super.switchToViewMode();
     this.loaded = true;
   }
 
@@ -126,7 +117,7 @@ export class CVEComponent extends BaseCVEComponent implements OnInit {
         break;
       case 'edit':
         if (this.getForm().dirty) {
-          const confirmed = await this.openStopEditConfirmationDialogue();
+          const confirmed = await this.openDiscardChangesDialogue(this.dialogueService);
           if (confirmed) {
             setTimeout(async () => {
               await this.switchToViewMode();
@@ -137,34 +128,5 @@ export class CVEComponent extends BaseCVEComponent implements OnInit {
         }
         break;
     }
-  }
-
-
-
-  openStopEditConfirmationDialogue(): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
-      const dialogRef: NbDialogRef<any> = this.dialogService.open(AWMSConfirmationDialogueComponent, {
-        context: {
-          title: 'Discard changes',
-          message: 'Are you sure you want to discard your changes?',
-        },
-      });
-
-      dialogRef.onClose.subscribe(result => {
-        resolve(result);
-      });
-    });
-  }
-
-  disableForm(): void {
-    Object.values(this.getForm().controls).forEach(control => {
-      control.disable();
-    });
-  }
-
-  enableForm(): void {
-    Object.values(this.getForm().controls).forEach(control => {
-      control.enable();
-    });
   }
 }
