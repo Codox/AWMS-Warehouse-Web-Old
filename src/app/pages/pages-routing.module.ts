@@ -13,6 +13,12 @@ const routes: Routes = [{
       component: DashboardComponent,
     },
     {
+      path: 'warehouse',
+      loadChildren: () => import('./warehouse/warehouse.module').then(
+        m => m.WarehouseModule,
+      ),
+    },
+    {
       path: '',
       redirectTo: 'dashboard',
       pathMatch: 'full',

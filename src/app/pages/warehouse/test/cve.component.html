@@ -1,0 +1,111 @@
+<form *ngIf="loaded">
+  <nb-layout>
+    <nb-layout-header>{{ utils.upperFirst(mode) }} Warehouse</nb-layout-header>
+    <nb-layout-column style="padding-right: 0; padding-left: 0">
+
+      <!-- Name + UUID-->
+      <nb-card>
+        <nb-card-header>General</nb-card-header>
+        <nb-card-body>
+          <div class="row">
+            <!-- Name -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Name" objectName="name" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+
+            <!-- UUID -->
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="UUID" objectName="uuid" [mode]="'view'"></ngx-awms-form-input>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Contact Telephone" objectName="contactTelephone" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card>
+        <nb-card-header>Address</nb-card-header>
+        <nb-card-body>
+          <div class="row">
+            <div class="col-sm-12">
+              <ngx-awms-form-input [formOptions]="getForm()" humanName="Address Line 1" objectName="addressLine1" [mode]="mode"></ngx-awms-form-input>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <ngx-awms-form-input [formOptions]="getForm()" humanName="Address Line 2" objectName="addressLine2" [mode]="mode"></ngx-awms-form-input>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <ngx-awms-form-input [formOptions]="getForm()" humanName="Address Line 3" objectName="addressLine3" [mode]="mode"></ngx-awms-form-input>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Town" objectName="town" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="City" objectName="city" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="Region" objectName="region" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-input [formOptions]="getForm()" humanName="ZIP Code" objectName="zipCode" [mode]="mode"></ngx-awms-form-input>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <ngx-awms-form-country-dropdown [formOptions]="getForm()" dropdownType="countries" humanName="Country" objectName="country" [countries]="countries" [disabled]="mode === 'view'"></ngx-awms-form-country-dropdown>
+              </div>
+            </div>
+          </div>
+
+        </nb-card-body>
+      </nb-card>
+
+      <nb-card>
+        <nb-card-body>
+          <div *ngIf="mode === 'view'">
+            <button nbButton status="primary" (click)="switchToEditMode()"><nb-icon icon="edit-outline"></nb-icon>Edit</button>
+          </div>
+
+          <div *ngIf="mode === 'edit'">
+            <button nbButton status="success" type="button" [disabled]="!getForm().valid" (click)="save()" style="margin-right: 10px">Save</button>
+            <button nbButton status="danger" type="button" (click)="discard()">Discard</button>
+          </div>
+        </nb-card-body>
+      </nb-card>
+
+    </nb-layout-column>
+  </nb-layout>
+</form>

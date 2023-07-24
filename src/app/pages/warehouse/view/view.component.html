@@ -1,0 +1,11 @@
+<nb-layout>
+  <nb-layout-header>View Warehouses</nb-layout-header>
+  <nb-layout-column style="padding-right: 0; padding-left: 0">
+    <nb-card>
+      <nb-card-body>
+        <!--(custom)="onCustom($event)"-->
+        <ng2-smart-table [settings]="settings" [source]="source" (custom)="onCustom($event)"></ng2-smart-table>
+      </nb-card-body>
+    </nb-card>
+  </nb-layout-column>
+</nb-layout>

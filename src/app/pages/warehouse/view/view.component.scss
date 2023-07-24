@@ -1,0 +1,17 @@
+:host {
+  ::ng-deep {
+    ng2-st-tbody-edit-delete {
+      display: none;
+      height: 0 !important;
+    }
+
+    ng2-st-tbody-custom {
+      display: flex;
+      text-align: center;
+    }
+
+    thead > tr.ng2-smart-titles.ng-star-inserted > th.ng2-smart-actions.ng-star-inserted > div {
+      width: 1px;
+    }
+  }
+}
