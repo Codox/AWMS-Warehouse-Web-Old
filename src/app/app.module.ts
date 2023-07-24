@@ -6,7 +6,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './@core/core.module';
 import {ThemeModule} from './@theme/theme.module';
 import {AppComponent} from './app.component';
@@ -20,7 +20,9 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
-import {AuthModule, LogLevel} from 'angular-auth-oidc-client';
+import {AuthInterceptor, AuthModule, LogLevel} from 'angular-auth-oidc-client';
+import {WarehouseService} from './services/warehouse.service';
+import {CountryService} from './services/country.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -51,10 +53,16 @@ import {AuthModule, LogLevel} from 'angular-auth-oidc-client';
         silentRenew: true,
         useRefreshToken: true,
         logLevel: LogLevel.Debug,
+        secureRoutes: ['http://localhost:3001/'],
       },
     }),
   ],
   bootstrap: [AppComponent],
+  providers: [
+    WarehouseService,
+    CountryService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
 })
 export class AppModule {
 }
